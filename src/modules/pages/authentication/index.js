@@ -1,14 +1,46 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
+import axios from 'axios'
 
 const Authentication = () => {
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
+   const [isSubmitting, setSubmitting] = useState(false)
    
+
+
 
    const handleSubmit = event => {
        event.preventDefault()
+       setSubmitting(true)
    }
+
+   useEffect(() => {
+       if (!isSubmitting) {
+           return
+       }
+       console.log('effect is triggered');
+    axios('https://conduit.productionready.io/api/users/login', {
+         method: 'post',
+         body: {
+             user: {
+                 email: 'turk@aol.com',
+                 password: '123',
+             }
+         }
+    })
+    .then(res => {
+        console.log('res', res);
+        setSubmitting(false)
+    })
+    .catch(error => {
+        console.log('ERROR', error);
+        setSubmitting(false)
+    })
+})
+
+ 
+
 
     return (
         <div className="auth-page">
@@ -39,7 +71,10 @@ const Authentication = () => {
                                     onChange={e => setPassword(e.target.value)}
                                     />
                                 </fieldset>
-                                <button className="btn btn-lg btn-primary pull-xs-right" type='submit'>Sign In</button>
+                                <button 
+                                disabled={isSubmitting}
+                                className="btn btn-lg btn-primary pull-xs-right" 
+                                type='submit'>Sign In</button>
                             </fieldset>
                         </form>
                     </div>
@@ -48,6 +83,7 @@ const Authentication = () => {
         </div>
     )
 }
+
 
 
 
